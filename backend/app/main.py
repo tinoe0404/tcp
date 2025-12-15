@@ -3,6 +3,8 @@ from fastapi import FastAPI  # type: ignore
 from app.core.config import get_settings
 from app.core.database import engine, Base
 from app.api.routes.auth import router as auth_router
+from app.api.routes.protected import router as protected_router
+
 
 
 def create_app() -> FastAPI:
@@ -26,6 +28,13 @@ def create_app() -> FastAPI:
         prefix="/auth",
         tags=["auth"],
     )
+
+    app.include_router(
+    protected_router,
+    prefix="",
+    tags=["protected"],
+)
+
 
     @app.get("/health", tags=["health"])
     def health_check():
