@@ -1,5 +1,7 @@
 from fastapi import FastAPI  # type: ignore
+
 from app.core.config import get_settings
+from app.core.database import engine, Base
 from app.api.routes.auth import router as auth_router
 
 
@@ -12,12 +14,25 @@ def create_app() -> FastAPI:
         version="0.1.0",
     )
 
-    # ✅ Include routers here
-    app.include_router(auth_router)
+    # ✅ Create tables on application startup
+    @app.on_event("startup")
+    async def on_startup():
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+
+    # ✅ Include routers
+    app.include_router(
+        auth_router,
+        prefix="/auth",
+        tags=["auth"],
+    )
 
     @app.get("/health", tags=["health"])
     def health_check():
-        return {"status": "ok", "env": settings.env}
+        return {
+            "status": "ok",
+            "env": settings.env,
+        }
 
     return app
 

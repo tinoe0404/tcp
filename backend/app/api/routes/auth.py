@@ -1,12 +1,18 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
 
 from app.core.database import get_db
-from app.core.security import verify_password, create_access_token
-from app.models.user import User
+from app.core.security import (
+    verify_password,
+    hash_password,
+    create_access_token,
+)
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+router = APIRouter()
+
+# 🔐 Hardcoded admin credentials for Stage 4
+ADMIN_USERNAME = "admin"
+ADMIN_PASSWORD_HASH = hash_password("adminpass")
 
 
 @router.post("/login")
@@ -15,20 +21,19 @@ async def login(
     password: str,
     db: AsyncSession = Depends(get_db),
 ):
-    result = await db.execute(
-        select(User).where(User.username == username)
-    )
-    user = result.scalar_one_or_none()
-
-    if not user or not verify_password(password, user.hashed_password):
+    if username != ADMIN_USERNAME:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials",
         )
 
-    access_token = create_access_token(
-        data={"sub": user.username}
-    )
+    if not verify_password(password, ADMIN_PASSWORD_HASH):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials",
+        )
+
+    access_token = create_access_token({"sub": username})
 
     return {
         "access_token": access_token,
