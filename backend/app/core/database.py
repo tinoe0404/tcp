@@ -1,21 +1,26 @@
-from sqlalchemy.ext.asyncio import (  # type: ignore
+from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
     create_async_engine,
 )
-from sqlalchemy.engine import URL  # type: ignore
+from sqlalchemy.engine import URL
+from sqlalchemy.orm import DeclarativeBase
 
 from app.core.config import settings
 
 
+class Base(DeclarativeBase):
+    pass
+
+
 DATABASE_URL = URL.create(
     drivername="sqlite+aiosqlite",
-    database=settings.db_name,   # ✅ lowercase
+    database=settings.db_name,   # ✅ FIXED
 )
 
 engine = create_async_engine(
     DATABASE_URL,
-    echo=settings.debug,         # ✅ lowercase
+    echo=settings.debug,         # ✅ FIXED
 )
 
 AsyncSessionLocal = async_sessionmaker(

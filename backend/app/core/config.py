@@ -1,5 +1,5 @@
-from pydantic import BaseModel
 from functools import lru_cache
+from pydantic import BaseModel
 
 
 class Settings(BaseModel):
@@ -7,7 +7,7 @@ class Settings(BaseModel):
     debug: bool = True
     env: str = "development"
 
-    # Database
+    # ✅ DATABASE
     db_name: str = "tcp.db"
 
 
