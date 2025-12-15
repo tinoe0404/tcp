@@ -1,19 +1,19 @@
-from pydantic import BaseModel # type: ignore
-from dotenv import load_dotenv # type: ignore
-import os
-
-load_dotenv()
+from pydantic import BaseModel
+from functools import lru_cache
 
 
 class Settings(BaseModel):
     app_name: str = "TCP POS Backend"
-    environment: str = "development"
     debug: bool = True
+    env: str = "development"
+
+    # Database
+    db_name: str = "tcp.db"
 
 
+@lru_cache
 def get_settings() -> Settings:
-    return Settings(
-        app_name=os.getenv("APP_NAME", "TCP POS Backend"),
-        environment=os.getenv("ENVIRONMENT", "development"),
-        debug=os.getenv("DEBUG", "true").lower() == "true",
-    )
+    return Settings()
+
+
+settings = get_settings()

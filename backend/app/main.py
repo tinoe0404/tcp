@@ -13,7 +13,7 @@ def create_app() -> FastAPI:
 
     @app.get("/health", tags=["health"])
     def health_check():
-        return {"status": "ok", "env": settings.environment}
+        return {"status": "ok", "env": settings.env}
 
     return app
 
