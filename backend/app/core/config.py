@@ -10,6 +10,11 @@ class Settings(BaseModel):
     # ✅ DATABASE
     db_name: str = "tcp.db"
 
+# Security / JWT
+    JWT_SECRET_KEY: str = "CHANGE_ME_IN_PRODUCTION"
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+
 
 @lru_cache
 def get_settings() -> Settings:
