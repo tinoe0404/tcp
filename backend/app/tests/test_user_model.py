@@ -9,6 +9,17 @@ def test_password_hashing():
     assert hashed != password
     assert verify_password(password, hashed) is True
 
+def test_user_default_role():
+    from app.models.user import User
+
+    user = User(
+        username="testuser",
+        hashed_password="hashed",
+    )
+
+    assert user.role == "staff"
+
+
 
 def test_user_fields():
     user = User(
