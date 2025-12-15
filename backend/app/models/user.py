@@ -24,5 +24,10 @@ class User(Base):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
         if self.role is None:
             self.role = UserRole.STAFF.value
+
+        if self.is_active is None:
+            self.is_active = True
+
